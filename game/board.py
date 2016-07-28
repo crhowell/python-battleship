@@ -45,6 +45,29 @@ class Board:
         """
         return True if move in self.available_moves else False
 
+    def indicator_at_cell(self, cell):
+        """Returns the indicator value at index positions
+
+        Keyword arguments:
+        cell -- list containing board index positions
+        """
+        return self.board['rows'][cell[1]][cell[0]]
+
+    def get_indicator(self, cell):
+        """Return an indicator based on 'hit' or 'miss'
+
+        Keyword arguments:
+        cell -- list of 2 items, move position indices
+        """
+        indicator = self.indicator_at_cell(cell)
+        if indicator == Board.INDICATORS['empty']:
+            return Board.INDICATORS['miss']
+        elif (indicator == Board.INDICATORS['vship']
+              or indicator == Board.INDICATORS['hship']):
+            return Board.INDICATORS['hit']
+        else:
+            return False
+
     def build_initial_moves(self):
         """Return a list of all possible moves"""
         moves = []
