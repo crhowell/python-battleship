@@ -1,2 +1,2 @@
-# python-battleship
-A console based Battleship game built with Python
+# Python Battleship
+A console-based version of the Battleship board game, built with Python.
