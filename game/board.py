@@ -12,10 +12,40 @@ class Board:
         self.size = size
         self.board = (self.build_empty_board()
                       if 'board' not in kwargs else kwargs['board'])
-        self.available_moves = (self.init_moves()
+        self.available_moves = (self.build_initial_moves()
                                 if 'moves_left' not in kwargs else kwargs['moves_left'])
 
-    def init_moves(self):
+    def place_token(self, cell, token):
+        self.board['rows'][cell[1]][cell[0]] = token
+
+    def parse_move(self, move):
+        """Parse string input into position indices list.
+
+        Keyword arguments:
+        move -- a move input string from player
+        """
+        return [move[0], int(move[1:])]
+
+    def move_pos(self, move):
+        """Return a list containing cell position
+
+        Keyword arguments:
+        cell -- a two item list, contains grid position.
+        """
+        cell = self.parse_move(move)
+        col = self.board['heading'].index(cell[0])
+        row = cell[1] - 1
+        return [col, row]
+
+    def check_move(self, move):
+        """Validate a player move on the board.
+
+        Keyword arguments:
+        move -- a move input string from player
+        """
+        return True if move in self.available_moves else False
+
+    def build_initial_moves(self):
         """Return a list of all possible moves"""
         moves = []
         for col in self.board['heading']:
