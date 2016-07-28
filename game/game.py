@@ -15,6 +15,7 @@ class Game:
 
     def __init__(self):
         self.players = self.initialize_players()
+        self.clear_screen()
         self.place_ships()
         self.game_over = False
 
@@ -117,6 +118,9 @@ class Game:
 
     def place_ships(self):
         for player in self.players:
+            print('-' * 25, '\n')
+            print('{} PLACE YOUR BATTLESHIPS\n'.format(player['player']))
+            print('-' * 25, '\n')
             for ship in player['fleet']:
                 self.print_board(player['board'], False)
                 print('\nThe {} takes {} spots'.format(ship, ship.size))

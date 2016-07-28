@@ -37,10 +37,21 @@ class Board:
         row = cell[1] - 1
         return [col, row]
 
+    def placement_cells(self, size, cell, angle):
+        cells = []
+        for i in range(size):
+            if angle == 'V':
+                cells.append([cell[1] + i, cell[0]])
+            elif angle == 'H':
+                cells.append([cell[1], cell[0] + i])
+
+        return cells
+
     def place_ship(self, ship, move, angle):
         if move in self.available_moves:
             cell = self.move_pos(move)
-            if self.collision_check(cell, ship.size, angle):
+            pos_groups = self.placement_cells(ship.size, cell, angle)
+            if self.collision_check(pos_groups):
                 for i in range(ship.size):
                     if angle == 'V':
                         self.board['rows'][cell[1] + i][cell[0]] = Board.INDICATORS['vship']
@@ -51,25 +62,12 @@ class Board:
         else:
             print('Invalid choice.')
 
-    def collision_check(self, cell, ship_size, angle):
+    def collision_check(self, pos_groups=[]):
         checks = []
-        if angle == 'v':
-            for i in range(ship_size):
-                indicator = self.indicator_at_cell([cell[1] + 1, cell[0]])
-                if indicator != Board.INDICATORS['empty']:
-                    checks.append(False)
-                else:
-                    checks.append(True)
-        elif angle == 'h':
-            for i in range(ship_size):
-                indicator = self.indicator_at_cell([cell[1], cell[0] + 1])
-                if indicator != Board.INDICATORS['empty']:
-                    checks.append(False)
-                else:
-                    checks.append(True)
-
-        else:
-            print("Must give horizontal or vertical")
+        for pos in pos_groups:
+            indicator = self.indicator_at_cell(pos)
+            check = True if indicator == Board.INDICATORS['empty'] else False
+            checks.append(check)
 
         return False if False in checks else True
 
