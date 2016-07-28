@@ -1,4 +1,6 @@
-from game import game
+from game.game import Game
 
 if __name__ == '__main__':
-	print('Debug Start')
+    game = Game()
+    print('Debug Start')
+    game.play()
