@@ -15,6 +15,7 @@ class Game:
 
     def __init__(self):
         self.players = self.initialize_players()
+        self.place_ships()
         self.game_over = False
 
     def play(self):
@@ -112,8 +113,16 @@ class Game:
                 'moves': Board(),
                 'fleet': self.build_new_fleet()
             })
-
         return players
+
+    def place_ships(self):
+        for player in self.players:
+            for ship in player['fleet']:
+                self.print_board(player['board'], False)
+                print('\nThe {} takes {} spots'.format(ship, ship.size))
+                move = player['player'].prompt_for('place {} at'.format(ship))
+                angle = player['player'].prompt_for('(H)oriztal or (V)ertical')[0]
+                player['board'].place_ship(ship, move, angle)
 
     def build_new_fleet(self):
         """Return a list of Battleships from FLEET"""
