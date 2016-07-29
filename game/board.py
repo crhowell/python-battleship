@@ -51,13 +51,16 @@ class Board:
         if move in self.available_moves:
             cell = self.move_pos(move)
             pos_groups = self.placement_cells(ship.size, cell, angle)
-            if self.collision_check(pos_groups):
+            coll_check = self.collision_check(pos_groups)
+            if coll_check:
                 for i in range(ship.size):
                     if angle == 'V':
                         self.board['rows'][cell[1] + i][cell[0]] = Board.INDICATORS['vship']
                     elif angle == 'H':
                         self.board['rows'][cell[1]][cell[0] + i] = Board.INDICATORS['hship']
                 return True
+            elif coll_check is None:
+                print('\n**Your ship has to be placed inside the board.**\n')
             else:
                 print('\n**You cannot place a ship across another ship.**\n')
         else:
@@ -67,11 +70,21 @@ class Board:
     def collision_check(self, pos_groups=[]):
         checks = []
         for pos in pos_groups:
-            indicator = self.indicator_at_cell(pos)
-            check = True if indicator == Board.INDICATORS['empty'] else False
-            checks.append(check)
+            if not self.valid_size(pos):
+                return None
+            else:
+                indicator = self.indicator_at_cell(pos)
+                check = True if indicator == Board.INDICATORS['empty'] else False
+                checks.append(check)
 
         return False if False in checks else True
+
+    def valid_size(self, cell):
+        size = self.size - 1
+        if cell[0] > size or cell[1] > size:
+            return False
+        else:
+            return True
 
     def check_move(self, move):
         """Validate a player move on the board.
