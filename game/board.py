@@ -41,9 +41,9 @@ class Board:
         cells = []
         for i in range(size):
             if angle == 'V':
-                cells.append([cell[1] + i, cell[0]])
+                cells.append([cell[0], cell[1] + i])
             elif angle == 'H':
-                cells.append([cell[1], cell[0] + i])
+                cells.append([cell[0] + i, cell[1]])
 
         return cells
 
@@ -57,10 +57,12 @@ class Board:
                         self.board['rows'][cell[1] + i][cell[0]] = Board.INDICATORS['vship']
                     elif angle == 'H':
                         self.board['rows'][cell[1]][cell[0] + i] = Board.INDICATORS['hship']
+                return True
             else:
-                print('You cannot place this ship there.')
+                print('\n**You cannot place a ship across another ship.**\n')
         else:
-            print('Invalid choice.')
+            print('\n**Invalid grid position.**\n')
+        return False
 
     def collision_check(self, pos_groups=[]):
         checks = []

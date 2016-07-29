@@ -65,6 +65,24 @@ class Game:
         """Remove 1st player and append to end."""
         self.players.append(self.players.pop(0))
 
+    def place_ships(self):
+        for player in self.players:
+            self.prompt_to_continue(
+                '\n{} you will now place your ships.\n'.format(player['player'])
+            )
+            board = player['board']
+            for ship in player['fleet']:
+                placed = False
+                self.print_placement_header(player['player'])
+                while not placed:
+                    self.print_board(player['board'], False)
+                    print('\nThe {} takes {} spots'.format(ship, ship.size))
+                    move = player['player'].prompt_for('place {} at'.format(ship))
+                    angle = player['player'].prompt_for('(H)oriztal or (V)ertical')[0]
+                    self.clear_screen()
+                    placed = board.place_ship(ship, move, angle)
+
+
     def mask_row(self, row):
         mask_pieces = [
             Board.INDICATORS['vship'],
@@ -77,6 +95,14 @@ class Game:
     def clear_screen(self):
         """Clears the terminal screen."""
         print("\033c", end="")
+
+    def prompt_to_continue(self, message):
+        input('{} {}'.format(message, 'Press ENTER to continue...'))
+
+    def print_placement_header(self, player):
+        print('-' * 25, '\n')
+        print('{} PLACE YOUR BATTLESHIPS\n'.format(player))
+        print('-' * 25, '\n')
 
     def print_board_heading(self, board):
         """Displays the heading section of the board"""
@@ -115,18 +141,6 @@ class Game:
                 'fleet': self.build_new_fleet()
             })
         return players
-
-    def place_ships(self):
-        for player in self.players:
-            print('-' * 25, '\n')
-            print('{} PLACE YOUR BATTLESHIPS\n'.format(player['player']))
-            print('-' * 25, '\n')
-            for ship in player['fleet']:
-                self.print_board(player['board'], False)
-                print('\nThe {} takes {} spots'.format(ship, ship.size))
-                move = player['player'].prompt_for('place {} at'.format(ship))
-                angle = player['player'].prompt_for('(H)oriztal or (V)ertical')[0]
-                player['board'].place_ship(ship, move, angle)
 
     def build_new_fleet(self):
         """Return a list of Battleships from FLEET"""
