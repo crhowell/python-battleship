@@ -21,7 +21,7 @@ class Game:
 
     def play(self):
         print('Game Running')
-        board = self.current_board()
+        board = self.enemy_board()
         i = 0
         while not self.game_over:
             self.print_game_board()
@@ -33,7 +33,7 @@ class Game:
             token = board.get_indicator(cell)
             self.update_boards(cell, token)
             self.switch_players()
-            board = self.current_board()
+            board = self.enemy_board()
             if i == 10:
                 self.game_over = True
             i += 1
@@ -48,6 +48,10 @@ class Game:
 
     def current_board(self):
         return self.players[0]['board']
+
+    def enemy_board(self):
+        enemy = self.players[1]
+        return enemy['board']
 
     def get_player_move(self):
         """Prompts player for a move on board."""
@@ -75,7 +79,7 @@ class Game:
                 placed = False
                 self.print_placement_header(player['player'])
                 while not placed:
-                    self.print_board(player['board'], False)
+                    self.print_board(player['board'])
                     print('\nThe {} takes {} spots'.format(ship, ship.size))
                     move = player['player'].prompt_for('place {} at'.format(ship))
                     angle = player['player'].prompt_for('(H)oriztal or (V)ertical')[0]
@@ -108,7 +112,7 @@ class Game:
         """Displays the heading section of the board"""
         print("   " + " ".join(board.board['heading']))
 
-    def print_board(self, board, hide=True):
+    def print_board(self, board):
         """Displays entire game board of the current player.
 
         Keyword arguments:
@@ -118,16 +122,14 @@ class Game:
         self.print_board_heading(board)
         row_num = 1
         for row in board.board['rows']:
-            if hide:
-                row = self.mask_row(row)
             print(str(row_num).rjust(2) + " " + (" ".join(row)))
             row_num += 1
 
     def print_game_board(self):
         print('-' * 25, '\n', 'Shots at Enemy\n', '-' * 25, '\n')
-        print(self.print_board(self.players[0]['moves'], True))
+        print(self.print_board(self.players[0]['moves']))
         print('=' * 25)
-        print(self.print_board(self.players[0]['board'], False))
+        print(self.print_board(self.players[0]['board']))
         print('-' * 25, '\nShots at You\n', '-' * 25)
 
     def initialize_players(self):
