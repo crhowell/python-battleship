@@ -31,15 +31,27 @@ class Game:
                 move = self.get_player_move()
             cell = board.move_pos(move)
             token = board.get_indicator(cell)
-            self.update_boards(cell, token)
+            if token == Board.INDICATORS['hit']:
+                ship = self.get_ship(move)
+                ship.hit()
+                print('Ship: {} hits: {} sunk: {}'.format(ship, ship.hits_taken, ship.is_sunk()))
+                if ship.is_sunk():
+                    token = Board.INDICATORS['sunk']
+                    for pos in ship.pos:
+                        self.update_boards(board.move_pos(pos), token)
+
+                    self.sunk_ship()
+                    self.is_game_over()
+                else:
+                    self.update_boards(cell, token)
+            else:
+                self.update_boards(cell, token)
+
             self.switch_players()
             board = self.enemy_board()
-            if i == 10:
-                self.game_over = True
-            i += 1
-
 
         print('Game Over')
+        print('Winner is {}'.format(self.players[1]['player']))
 
     def update_boards(self, cell, token):
         self.players[1]['board'].place_token(cell, token)
@@ -52,6 +64,9 @@ class Game:
     def enemy_board(self):
         enemy = self.players[1]
         return enemy['board']
+
+    def sunk_ship(self):
+        self.players[1]['sunk'] += 1
 
     def get_player_move(self):
         """Prompts player for a move on board."""
@@ -83,9 +98,8 @@ class Game:
                     print('\nThe {} takes {} spots'.format(ship, ship.size))
                     move = player['player'].prompt_for('place {} at'.format(ship))
                     angle = player['player'].prompt_for('(H)oriztal or (V)ertical')[0]
-                    self.clear_screen()
+                    # self.clear_screen()
                     placed = board.place_ship(ship, move, angle)
-
 
     def mask_row(self, row):
         mask_pieces = [
@@ -95,6 +109,17 @@ class Game:
         new_row = [cell if cell not in mask_pieces else
                    Board.INDICATORS['empty'] for cell in row]
         return new_row
+
+    def get_ship(self, loc):
+        for battleship in self.players[1]['fleet']:
+            if loc in battleship.pos:
+                return battleship
+        return None
+
+    def is_game_over(self):
+        sunken_ships = self.players[1]['sunk']
+        total_ships = len(self.players[1]['fleet'])
+        self.game_over = True if sunken_ships >= total_ships else False
 
     def clear_screen(self):
         """Clears the terminal screen."""
@@ -140,7 +165,8 @@ class Game:
                 'player': name,
                 'board': Board(),
                 'moves': Board(),
-                'fleet': self.build_new_fleet()
+                'fleet': self.build_new_fleet(),
+                'sunk': 0
             })
         return players
 

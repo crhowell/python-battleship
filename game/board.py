@@ -47,17 +47,35 @@ class Board:
 
         return cells
 
+    def is_sunk(self, ship, start, angle):
+        sunk_check = []
+        cell = self.move_pos(start)
+        ship_pos = self.placement_cells(ship.size, cell, angle)
+        for pos in ship_pos:
+            if pos == Board.INDICATORS['hit']:
+                sunk_check.append(True)
+            else:
+                sunk_check.append(False)
+
+        return all(sunk_check)
+
     def place_ship(self, ship, move, angle):
         if move in self.available_moves:
             cell = self.move_pos(move)
             pos_groups = self.placement_cells(ship.size, cell, angle)
             coll_check = self.collision_check(pos_groups)
             if coll_check:
-                for i in range(ship.size):
+                v_ship = Board.INDICATORS['vship']
+                h_ship = Board.INDICATORS['hship']
+                for pos in pos_groups:
+                    print('POS: ', pos)
                     if angle == 'V':
-                        self.board['rows'][cell[1] + i][cell[0]] = Board.INDICATORS['vship']
+                        self.board['rows'][pos[1]][pos[0]] = v_ship
                     elif angle == 'H':
-                        self.board['rows'][cell[1]][cell[0] + i] = Board.INDICATORS['hship']
+                        self.board['rows'][pos[1]][pos[0]] = h_ship
+
+                ship.set_pos(self.get_location(pos_groups))
+                ship.set_angle(angle)
                 return True
             elif coll_check is None:
                 print('\n**Your ship has to be placed inside the board.**\n')
@@ -85,6 +103,14 @@ class Board:
             return False
         else:
             return True
+
+    def get_location(self, pos_groups):
+        locations = []
+        for pos in pos_groups:
+            head = self.board['heading'][pos[0]]
+            row = pos[1] + 1
+            locations.append('{}{}'.format(head, row))
+        return locations
 
     def check_move(self, move):
         """Validate a player move on the board.
