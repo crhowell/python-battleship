@@ -6,7 +6,11 @@ from .ship import Ship
 class Game:
     MAX_PLAYERS = 2
     FLEET = [
-        ("Aircraft Carrier", 5)
+        ("Aircraft Carrier", 5),
+        ("Battleship", 4),
+        ("Submarine", 3),
+        ("Cruiser", 3),
+        ("Patrol Boat", 2)
     ]
 
     def __init__(self):
