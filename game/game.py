@@ -6,16 +6,12 @@ from .ship import Ship
 class Game:
     MAX_PLAYERS = 2
     FLEET = [
-        ("Aircraft Carrier", 5),
-        ("Battleship", 4),
-        ("Submarine", 3),
-        ("Cruiser", 3),
-        ("Patrol Boat", 2)
+        ("Aircraft Carrier", 5)
     ]
 
     def __init__(self):
+        self.print_intro()
         self.players = self.initialize_players()
-        self.clear_screen()
         self.place_ships()
         self.game_over = False
 
@@ -27,6 +23,8 @@ class Game:
         print('Game Running')
         board = self.enemy_board()
         while not self.game_over:
+            self.clear_screen()
+            self.prompt_to_continue('\n\n{} it is your turn.'.format(self.players[0]['player']))
             self.print_game_board()
             move = self.get_player_move()
             while not board.check_move(move):
@@ -42,7 +40,6 @@ class Game:
                     token = Board.INDICATORS['sunk']
                     for pos in ship.pos:
                         self.update_boards(board.move_pos(pos), token)
-
                     self.sunk_ship()
                     self.is_game_over()
                 else:
@@ -50,10 +47,14 @@ class Game:
             else:
                 self.update_boards(cell, token)
 
+            board.remove_move(move)
             self.switch_players()
             board = self.enemy_board()
+            self.clear_screen()
+            self.print_game_board()
+            self.prompt_to_continue('\nMove placed.\nBefore changing players:')
 
-        print('Game Over')
+        print('\nGame Over\n')
         print('Winner is {}'.format(self.players[1]['player']))
 
     def update_boards(self, cell, token):
@@ -92,6 +93,7 @@ class Game:
     def place_ships(self):
         """Placement of all Game Players ships."""
         for player in self.players:
+            self.clear_screen()
             self.prompt_to_continue(
                 '\n{} you will now place your ships.\n'.format(player['player'])
             )
@@ -104,7 +106,7 @@ class Game:
                     print('\nThe {} takes {} spots'.format(ship, ship.size))
                     move = player['player'].prompt_for('place {} at'.format(ship))
                     angle = player['player'].prompt_for('(H)oriztal or (V)ertical')[0]
-                    # self.clear_screen()
+                    self.clear_screen()
                     placed = board.place_ship(ship, move, angle)
 
     def get_ship(self, loc):
@@ -130,7 +132,7 @@ class Game:
         """Clears the terminal screen."""
         print("\033c", end="")
 
-    def prompt_to_continue(self, message):
+    def prompt_to_continue(self, message=''):
         """Prompts user to press ENTER with any given message.
 
         Keyword arguments:
@@ -164,6 +166,14 @@ class Game:
         for row in board.board['rows']:
             print(str(row_num).rjust(2) + " " + (" ".join(row)))
             row_num += 1
+
+    def print_intro(self):
+        print(' ', '-'*25)
+        print('  |', ' '*21, '|')
+        print('  |', '   WELCOME TO        ', '|')
+        print('  | B A T T L E S H I P   |')
+        print('  |', ' ' * 21, '|')
+        print(' ', '-'*25)
 
     def print_game_board(self):
         """Displays both boards for current player."""

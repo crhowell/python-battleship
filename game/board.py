@@ -61,29 +61,34 @@ class Board:
 
     def place_ship(self, ship, move, angle):
         if move in self.available_moves:
-            cell = self.move_pos(move)
-            pos_groups = self.placement_cells(ship.size, cell, angle)
-            coll_check = self.collision_check(pos_groups)
-            if coll_check:
-                v_ship = Board.INDICATORS['vship']
-                h_ship = Board.INDICATORS['hship']
-                for pos in pos_groups:
-                    print('POS: ', pos)
-                    if angle == 'V':
-                        self.board['rows'][pos[1]][pos[0]] = v_ship
-                    elif angle == 'H':
-                        self.board['rows'][pos[1]][pos[0]] = h_ship
+            if self.angle_check(angle):
+                cell = self.move_pos(move)
+                pos_groups = self.placement_cells(ship.size, cell, angle)
+                coll_check = self.collision_check(pos_groups)
+                if coll_check:
+                    v_ship = Board.INDICATORS['vship']
+                    h_ship = Board.INDICATORS['hship']
+                    for pos in pos_groups:
+                        if angle == 'V':
+                            self.board['rows'][pos[1]][pos[0]] = v_ship
+                        elif angle == 'H':
+                            self.board['rows'][pos[1]][pos[0]] = h_ship
 
-                ship.set_pos(self.get_location(pos_groups))
-                ship.set_angle(angle)
-                return True
-            elif coll_check is None:
-                print('\n**Your ship has to be placed inside the board.**\n')
+                    ship.set_pos(self.get_location(pos_groups))
+                    ship.set_angle(angle)
+                    return True
+                elif coll_check is None:
+                    self.print_error('Your ship has to be placed inside the board.')
+                else:
+                    self.print_error('You cannot place a ship across another ship.')
             else:
-                print('\n**You cannot place a ship across another ship.**\n')
+                self.print_error('Invalid direction, Horizontal or Vertical.')
         else:
-            print('\n**Invalid grid position.**\n')
+            self.print_error('Invalid grid position.')
         return False
+
+    def angle_check(self, angle):
+        return True if angle == 'V' or angle == 'H' else False
 
     def collision_check(self, pos_groups=[]):
         checks = []
@@ -111,6 +116,14 @@ class Board:
             row = pos[1] + 1
             locations.append('{}{}'.format(head, row))
         return locations
+
+    def remove_move(self, move):
+        if move in self.available_moves:
+            self.available_moves.remove(move)
+
+
+    def print_error(self, message='Error.'):
+        print('\n**{}**\n'.format(message))
 
     def check_move(self, move):
         """Validate a player move on the board.
