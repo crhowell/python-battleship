@@ -59,7 +59,7 @@ class Board:
 
         return all(sunk_check)
 
-    def place_ship(self, ship, move, angle):
+    def place_ship(self, ship, move='', angle=''):
         if move in self.available_moves:
             if self.angle_check(angle):
                 cell = self.move_pos(move)
@@ -87,7 +87,7 @@ class Board:
             self.print_error('Invalid grid position.')
         return False
 
-    def angle_check(self, angle):
+    def angle_check(self, angle=''):
         return True if angle == 'V' or angle == 'H' else False
 
     def collision_check(self, pos_groups=[]):
