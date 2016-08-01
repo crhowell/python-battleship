@@ -41,8 +41,18 @@ class Game:
             board = self.enemy_board()
             self.clear_screen()
 
+        self.declare_winner()
+
+    def declare_winner(self):
+        win_player = self.players[1]
+        lose_player = self.players[0]
+
         print('\nGame Over\n')
-        print('Winner is {}'.format(self.players[1]['player']))
+        print('Winner is {}'.format(win_player['player']))
+        print('\n Winner board:\n','-'*25)
+        self.print_board(win_player['board'])
+        print('\n Loser board:\n','-'*25)
+        self.print_board(lose_player['board'])
 
     def play_turn(self, move, board):
         """Determines a valid move and places it on boards.
@@ -184,11 +194,10 @@ class Game:
         print("   " + " ".join(board.board['heading']))
 
     def print_board(self, board):
-        """Displays entire game board of the current player.
+        """Displays game board of a player.
 
         Keyword arguments:
         board -- a player's Board().
-        hide -- if pieces should be hidden from display.
         """
         self.print_board_heading(board)
         row_num = 1
