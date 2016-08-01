@@ -11,11 +11,19 @@ class Board:
     def __init__(self, size=10, **kwargs):
         self.size = size
         self.board = (self.build_empty_board()
-                      if 'board' not in kwargs else kwargs['board'])
+                      if 'board' not in kwargs
+                      else kwargs['board'])
         self.available_moves = (self.build_initial_moves()
-                                if 'moves_left' not in kwargs else kwargs['moves_left'])
+                                if 'moves_left' not in kwargs
+                                else kwargs['moves_left'])
 
     def place_token(self, cell, token):
+        """Places a 'token' at a given cell location.
+
+        Keyword arguments:
+        cell -- the indices of grid position
+        token -- A character to be represented on board.
+        """
         self.board['rows'][cell[1]][cell[0]] = token
 
     def parse_move(self, move):
@@ -78,11 +86,14 @@ class Board:
                     ship.set_angle(angle)
                     return True
                 elif coll_check is None:
-                    self.print_error('Your ship has to be placed inside the board.')
+                    self.print_error('''
+                        Your ship has to be placed inside the board.''')
                 else:
-                    self.print_error('You cannot place a ship across another ship.')
+                    self.print_error('''
+                        You cannot place a ship across another ship.''')
             else:
-                self.print_error('Invalid direction, Horizontal or Vertical.')
+                self.print_error('''
+                    Invalid direction, Horizontal or Vertical.''')
         else:
             self.print_error('Invalid grid position.')
         return False
@@ -97,7 +108,8 @@ class Board:
                 return None
             else:
                 indicator = self.indicator_at_cell(pos)
-                check = True if indicator == Board.INDICATORS['empty'] else False
+                check = (True if indicator == Board.INDICATORS['empty']
+                         else False)
                 checks.append(check)
 
         return False if False in checks else True
@@ -120,7 +132,6 @@ class Board:
     def remove_move(self, move):
         if move in self.available_moves:
             self.available_moves.remove(move)
-
 
     def print_error(self, message='Error.'):
         print('\n**{}**\n'.format(message))
@@ -150,8 +161,8 @@ class Board:
         indicator = self.indicator_at_cell(cell)
         if indicator == Board.INDICATORS['empty']:
             return Board.INDICATORS['miss']
-        elif (indicator == Board.INDICATORS['vship']
-              or indicator == Board.INDICATORS['hship']):
+        elif (indicator == Board.INDICATORS['vship'] or
+                indicator == Board.INDICATORS['hship']):
             return Board.INDICATORS['hit']
         else:
             return False
@@ -191,6 +202,8 @@ class Board:
         """
         rows = []
         for row in range(self.size):
-            rows.append([Board.INDICATORS['empty'] for col in range(self.size)])
+            rows.append(
+                [Board.INDICATORS['empty'] for col in range(self.size)]
+            )
 
         return rows

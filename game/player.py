@@ -9,7 +9,10 @@ class Player:
         Keyword arguments:
         prompt -- a string to be displayed with input.
         """
-        return input('{}: {} > '.format(self.name, prompt)).upper().strip()
+        return input('{}: {} > '.format(
+            self.name,
+            prompt
+        )).upper().strip()
 
     def move(self):
         """Display and return prompt_for() using its default"""

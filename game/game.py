@@ -28,12 +28,14 @@ class Game:
         board = self.enemy_board()
         while not self.game_over:
 
-            self.prompt_to_continue('\n\n{} it is your turn.'.format(self.players[0]['player']))
+            self.prompt_to_continue('\n\n{} it is your turn.'.format(
+                    self.players[0]['player']))
             self.clear_screen()
             self.print_game_board()
             move = self.get_player_move()
             while not board.check_move(move):
-                print('{} is an invalid move, try again.'.format(move))
+                print('{} is an invalid move, try again.'.format(
+                    move))
                 move = self.get_player_move()
 
             self.play_turn(move, board)
@@ -44,6 +46,7 @@ class Game:
         self.declare_winner()
 
     def declare_winner(self):
+        """Displays winner, winners board, and losers board."""
         win_player = self.players[1]
         lose_player = self.players[0]
 
@@ -123,7 +126,8 @@ class Game:
         """Placement of all Game Players ships."""
         for player in self.players:
             self.prompt_to_continue(
-                '\n{} you will now place your ships.\n'.format(player['player'])
+                '\n{} you will now place your ships.\n'.format(
+                    player['player'])
             )
             self.clear_screen()
             board = player['board']
@@ -132,9 +136,14 @@ class Game:
                 self.print_placement_header(player['player'])
                 while not placed:
                     self.print_board(player['board'])
-                    print('\nThe {} takes {} spots'.format(ship, ship.size))
-                    move = player['player'].prompt_for('place {} at'.format(ship))
-                    angle = player['player'].prompt_for('(H)oriztal or (V)ertical')
+                    print('\nThe {} takes {} spots'.format(
+                        ship,
+                        ship.size)
+                    )
+                    move = player['player'].prompt_for(
+                        'place {} at'.format(ship))
+                    angle = player['player'].prompt_for(
+                        '(H)oriztal or (V)ertical')
                     self.clear_screen()
                     placed = board.place_ship(ship, move, angle)
 
@@ -162,6 +171,7 @@ class Game:
         print("\033c", end="")
 
     def print_move_details(self, token=''):
+        """Displays the details of a validated move"""
         if token == Board.INDICATORS['hit']:
             return 'HIT!'
         elif token == Board.INDICATORS['miss']:
@@ -206,6 +216,7 @@ class Game:
             row_num += 1
 
     def print_intro(self):
+        """Displays an intro to the game, game title."""
         print(' ', '-'*25)
         print('  |', ' '*21, '|')
         print("  |    " + "WELCOME TO" + "         |")
